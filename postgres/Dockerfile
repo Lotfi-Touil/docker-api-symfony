@@ -4,9 +4,12 @@ FROM alpine:3.12
 # Install PostgreSQL
 RUN apk add --no-cache postgresql postgresql-contrib
 
+# Create necessary directories and set permissions
+RUN mkdir -p /run/postgresql && chown -R postgres:postgres /run/postgresql
+
 # Initialize database
 RUN mkdir /var/lib/postgresql/data && \
-    chown -R postgres:postgres /var/lib/postgresql
+    chown -R postgres:postgres /var/lib/postgresql/data
 
 USER postgres
 RUN initdb /var/lib/postgresql/data
@@ -16,4 +19,3 @@ EXPOSE 5432
 
 # Start PostgreSQL server
 CMD ["postgres", "-D", "/var/lib/postgresql/data"]
-
