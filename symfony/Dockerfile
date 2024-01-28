@@ -1,6 +1,5 @@
 # Dockerfile for Symfony
-FROM alpine:3.14
-
+FROM alpine:3.14 as base
 # Install PHP and its extensions along with curl
 RUN apk update && \
     apk add --no-cache \
@@ -20,9 +19,6 @@ RUN apk update && \
     php8-ctype \
     curl
 
-# Download and install Composer
-RUN curl -sS https://getcomposer.org/installer | php8 -- --install-dir=/usr/local/bin --filename=composer
-
 # Set up the Symfony application directory
 WORKDIR /app
 
@@ -32,3 +28,9 @@ EXPOSE 8000
 # Start Symfony server (adjust the CMD according to your Symfony setup)
 CMD ["php8", "-S", "0.0.0.0:8000", "-t", "/app/public"]
 
+# Stage to copy from
+FROM custom/composer as composer
+
+# Final stage
+FROM base
+COPY --from=composer /usr/local/bin/composer /usr/local/bin/composer

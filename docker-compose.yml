@@ -16,6 +16,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   composer:
+    image: custom/composer
     build:
       context: ./composer
     volumes:
@@ -30,6 +31,7 @@ services:
       - ./symfony:/app
     depends_on:
       - postgres
+      - composer
 
 volumes:
   postgres_data: {}
