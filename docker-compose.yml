@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  adminer:
+    build:
+      context: ./adminer
+    ports:
+      - "8080:8080"
+
+  postgres:
+    build:
+      context: ./postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  composer:
+    build:
+      context: ./composer
+    volumes:
+      - ./symfony:/app
+
+  symfony:
+    build:
+      context: ./symfony
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./symfony:/app
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data: {}
+
