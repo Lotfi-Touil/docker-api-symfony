@@ -6,7 +6,7 @@ ENV LANG=en_US.utf8 PGDATA=/var/lib/postgresql/data
 VOLUME ["/var/run/postgresql", "/var/lib/postgresql/data"]
 
 COPY root/ /
-
+RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
 EXPOSE 5432
