@@ -1,21 +1,28 @@
-# Dockerfile for PostgreSQL
 FROM alpine:3.12
 
-# Install PostgreSQL
 RUN apk add --no-cache postgresql postgresql-contrib
 
-# Create necessary directories and set permissions
-RUN mkdir -p /run/postgresql && chown -R postgres:postgres /run/postgresql
+RUN mkdir -p /run/postgresql && chown -R postgres:postgres /run/postgresql \
+    && mkdir -p /var/lib/postgresql/data && chown -R postgres:postgres /var/lib/postgresql/data
 
-# Initialize database
-RUN mkdir /var/lib/postgresql/data && \
-    chown -R postgres:postgres /var/lib/postgresql/data
+
+COPY ./conf/postgresql.conf /etc/postgresql/postgresql.conf
+COPY ./conf/pg_hba.conf /etc/postgresql/pg_hba.conf
+COPY ./init-db.sh /docker-entrypoint-initdb.d/init-db.sh
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+
+RUN chmod +x /docker-entrypoint-initdb.d/init-db.sh \
+    && chmod +x /usr/local/bin/entrypoint.sh
 
 USER postgres
-RUN initdb /var/lib/postgresql/data
 
-# Expose port
+RUN initdb -D /var/lib/postgresql/data
+
+RUN echo "include '/etc/postgresql/postgresql.conf'" > /var/lib/postgresql/data/postgresql.conf \
+    && echo "include '/etc/postgresql/pg_hba.conf'" >> /var/lib/postgresql/data/postgresql.conf
+
 EXPOSE 5432
 
-# Start PostgreSQL server
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
 CMD ["postgres", "-D", "/var/lib/postgresql/data"]

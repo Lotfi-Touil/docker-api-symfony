@@ -12,6 +12,10 @@ services:
       context: ./postgres
     ports:
       - "5432:5432"
+    environment:
+      POSTGRES_DB: skytowers_explorer_db
+      POSTGRES_USER: skyexplorer_user
+      POSTGRES_PASSWORD: strong_password123
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -20,7 +24,7 @@ services:
     build:
       context: ./composer
     volumes:
-      - ./symfony:/app
+      - ./symfony/SkyTowersExplorer:/app
 
   symfony:
     build:
@@ -28,10 +32,12 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./symfony:/app
+      - ./symfony/SkyTowersExplorer:/app
     depends_on:
       - postgres
       - composer
+    command: >
+      sh -c 'composer install --no-interaction && php8 -S 0.0.0.0:8000 -t /app/public'
 
 volumes:
   postgres_data: {}

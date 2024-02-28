@@ -1,5 +1,5 @@
 # Dockerfile for Symfony
-FROM alpine:3.14 as base
+FROM alpine:3.14 AS base
 # Install PHP and its extensions along with curl
 RUN apk update && \
     apk add --no-cache \
@@ -17,20 +17,37 @@ RUN apk update && \
     php8-dom \
     php8-xmlreader \
     php8-ctype \
-    curl
+    curl \
+    php8-iconv \
+    php8-tokenizer \
+    php8-xmlwriter \
+    php8-session \
+    php8-simplexml
 
 # Set up the Symfony application directory
 WORKDIR /app
 
-# Expose the Symfony port (adjust if your app uses a different port)
-EXPOSE 8000
-
-# Start Symfony server (adjust the CMD according to your Symfony setup)
-CMD ["php8", "-S", "0.0.0.0:8000", "-t", "/app/public"]
-
 # Stage to copy from
-FROM custom/composer as composer
+FROM custom/composer AS composer
+
 
 # Final stage
 FROM base
 COPY --from=composer /usr/local/bin/composer /usr/local/bin/composer
+COPY SkyTowersExplorer/ /app
+
+RUN ln -s /usr/bin/php8 /usr/bin/php
+
+# Pour afficher le PATH
+RUN echo "$PATH"
+
+# Pour ajouter /usr/bin au PATH, si nécessaire
+ENV PATH="/usr/bin:${PATH}"
+
+
+EXPOSE 8000
+CMD ["php8", "-S", "0.0.0.0:8000", "-t", "/app/public"]
+
+
+
+
