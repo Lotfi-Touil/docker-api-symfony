@@ -1,6 +1,10 @@
 #!/bin/sh
 set -e
 
+DB_USER="${POSTGRES_USER:-postgres}"
+DB_PASSWORD="${POSTGRES_PASSWORD:-password}"
+DB_NAME="${POSTGRES_DB:-postgres}"
+
 if [ "$(id -u)" -ne 0 ]; then
     echo "This script must be run as root" >&2
     exit 1
@@ -19,9 +23,9 @@ if [ ! -f "${PGDATA}/PG_VERSION" ]; then
 
     # Use psql to setup database and user
     su-exec postgres psql -v ON_ERROR_STOP=1 <<-EOSQL
-        CREATE USER skyexplorer_user WITH PASSWORD 'strong_password123';
-        CREATE DATABASE skytowers_explorer_db;
-        GRANT ALL PRIVILEGES ON DATABASE skytowers_explorer_db TO skyexplorer_user;
+        CREATE USER "${DB_USER}" WITH PASSWORD '${DB_PASSWORD}';
+        CREATE DATABASE "${DB_NAME}";
+        GRANT ALL PRIVILEGES ON DATABASE "${DB_NAME}" TO "${DB_USER}";
 EOSQL
 
     # Stop PostgreSQL
