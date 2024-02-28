@@ -1,0 +1,19 @@
+{# templates/tower/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Les Tours les Plus Hautes{% endblock %}
+
+{% block body %}
+<h1>Les Tours les Plus Hautes</h1>
+
+<div class="towers">
+    {% for tower in towers %}
+    <div class="tower">
+        <h2>{{ tower.name }}</h2>
+        <p>{{ tower.city }}, {{ tower.country }}</p>
+        <p>Hauteur : {{ tower.height }}m - Étages : {{ tower.floors }} - Année : {{ tower.yearCompleted }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
