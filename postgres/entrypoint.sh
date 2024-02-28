@@ -1,4 +1,4 @@
-
+#!/bin/sh
 set -e
 
 postgres -D /var/lib/postgresql/data &

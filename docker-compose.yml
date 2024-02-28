@@ -37,7 +37,10 @@ services:
       - postgres
       - composer
     command: >
-      sh -c 'composer install --no-interaction && php8 -S 0.0.0.0:8000 -t /app/public'
+      sh -c 'composer install --no-interaction --no-scripts &&
+      sleep 10 &&
+      php bin/console cache:clear &&
+      php8 -S 0.0.0.0:8000 -t /app/public'
 
 volumes:
   postgres_data: {}
