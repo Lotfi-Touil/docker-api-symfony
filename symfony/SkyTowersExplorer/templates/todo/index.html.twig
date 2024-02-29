@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Todo List{% endblock %}
+
+{% block body %}
+<style>
+    .todo-wrapper { margin: 2em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .todo-item { background: #F5F5F5; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+</style>
+
+<div class="todo-wrapper">
+    <h1>Todo List ✅</h1>
+    {% if todos is not empty %}
+        <ul>
+            {% for todo in todos %}
+                <li class="todo-item">
+                    {{ todo.title }} - Done: {{ todo.done ? 'Yes' : 'No' }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No todos found.</p>
+    {% endif %}
+</div>
+{% endblock %}
