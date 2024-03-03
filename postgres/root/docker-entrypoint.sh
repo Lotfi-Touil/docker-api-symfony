@@ -15,25 +15,24 @@ chown -R postgres:postgres "${PGDATA}" /var/run/postgresql
 if [ ! -f "${PGDATA}/PG_VERSION" ]; then
     su-exec postgres initdb -k -E UTF8 --locale=en_US.UTF-8
 
-    # Configure immediate start of PostgreSQL to accept connections
+    
     su-exec postgres pg_ctl -D "${PGDATA}" -o "-c listen_addresses='*'" start
 
-    # Wait for PostgreSQL to start
+    
     sleep 10
 
-    # Use psql to setup database and user
+    
     su-exec postgres psql -v ON_ERROR_STOP=1 <<-EOSQL
         CREATE USER "${DB_USER}" WITH PASSWORD '${DB_PASSWORD}';
         CREATE DATABASE "${DB_NAME}";
         GRANT ALL PRIVILEGES ON DATABASE "${DB_NAME}" TO "${DB_USER}";
 EOSQL
 
-    # Stop PostgreSQL
+
     su-exec postgres pg_ctl -D "${PGDATA}" stop
 
 fi
 
 echo "host all all 0.0.0.0/0 md5" >> "${PGDATA}/pg_hba.conf"
 
-# Execute the command provided as CMD to the Dockerfile
 exec su-exec postgres "$@"
